@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app: {{ template "pypi.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "pypi.fullname" . }}-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ template "pypi.name" . }}
+      release: {{ .Release.Name }}
+  policyTypes:
+  - Ingress
+  ingress:
+    - ports:
+      - port: 8080
+      from: []
+---
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app: {{ template "pypi.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "pypi.fullname" . }}-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ template "pypi.name" . }}
+      release: {{ .Release.Name }}
+  policyTypes:
+  - Egress
+  egress:
+    - ports:
+      - protocol: TCP
+        port: 443
+      - protocol: TCP
+        port: 53
+      - protocol: UDP
+        port: 53
